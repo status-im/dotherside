@@ -11,3 +11,29 @@ nimcache
 *.orig
 doc
 cmake-build-*
+
+# libraries
+*.a
+*.so
+*.so.*
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+*_autogen
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+DOtherSide.pc
+
+# binaries
+test/TestDynamicQObject
+

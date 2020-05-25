@@ -2,10 +2,10 @@ include(GNUInstallDirs)
 
 set(QTPREFIX "Qt")
 
-find_package(Qt6 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets)
+find_package(Qt6 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets QUIET)
 if (NOT Qt6_FOUND)
     set(QTPREFIX "Qt5")
-    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets)
+    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets REQUIRED)
 endif()
 
 # Macro for merging common code between static and shared
@@ -57,24 +57,28 @@ macro(add_target name type)
 endmacro()
 
 # Add shared version
-add_target(${PROJECT_NAME} SHARED)
+if(ENABLE_DYNAMIC_LIBS)
+    add_target(${PROJECT_NAME} SHARED)
 
-set(soversion "${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}")
+    set(soversion "${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}")
 
-set_target_properties(${PROJECT_NAME}
-PROPERTIES
-    SOVERSION "${soversion}"
-    VERSION "${CMAKE_PROJECT_VERSION}"
-)
+    set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+        SOVERSION "${soversion}"
+        VERSION "${CMAKE_PROJECT_VERSION}"
+    )
+endif(ENABLE_DYNAMIC_LIBS)
 
 # Add static version
-add_target(${PROJECT_NAME}Static STATIC)
+if(ENABLE_STATIC_LIBS)
+    add_target(${PROJECT_NAME}Static STATIC)
+endif(ENABLE_STATIC_LIBS)
 
 # Install directive for header files
 install(FILES
-  include/DOtherSide/DOtherSide.h
-  include/DOtherSide/DOtherSideTypes.h
-  DESTINATION include/DOtherSide
+    include/DOtherSide/DOtherSide.h
+    include/DOtherSide/DOtherSideTypes.h
+    DESTINATION include/DOtherSide
 )
 
 # Install directive for binaries
