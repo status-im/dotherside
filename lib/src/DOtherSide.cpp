@@ -100,11 +100,10 @@ void dos_qguiapplication_quit()
     qGuiApp->quit();
 }
 
-void dos_qapplication_create()
+void dos_qapplication_create(char *appName)
 {
     static int argc = 1;
-    static char empty[1] = {0};
-    static char *argv[] = {empty};
+    static char *argv[] = {appName};
 
     register_meta_types();
 
