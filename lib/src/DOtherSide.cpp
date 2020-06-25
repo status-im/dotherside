@@ -105,10 +105,8 @@ void dos_qapplication_create()
 {
     static int argc = 1;
     static char empty[1] = {0};
-    static char *argv[] = {empty};
-
+    static char*argv[] = {(char*)"Appname", (char*)"--platform", (char*)"windows:dpiawareness=1"};
     register_meta_types();
-
     new QApplication(argc, argv);
 }
 
