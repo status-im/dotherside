@@ -29,6 +29,7 @@
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
+#include <QClipboard>
 #include <QtCore>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
@@ -74,6 +75,12 @@ void dos_qapplication_enable_hdpi()
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 }
+
+::DosQClipBoard dos_qapplication_clipboard()
+{
+    QApplication::clipboard();
+}
+
 
 void dos_qguiapplication_create()
 {
