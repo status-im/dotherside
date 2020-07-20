@@ -31,6 +31,11 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtCore>
+#include <QtGui/QPixmap>
+#include <QtGui/QImage>
+#include <QtGui/QColorSpace>
+#include <QtCore/QFile>
+#include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
@@ -1107,3 +1112,23 @@ void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
 }
 
 #include "DOtherSide.moc"
+
+char *dos_image_resizer(char* imagePath, int maxSize)
+{
+    QImage img(imagePath);
+    img.setColorSpace(QColorSpace::SRgb);
+    int w = img.width();
+    int h = img.height();
+
+    QPixmap pixmap;
+    pixmap = pixmap.fromImage(img.scaled(maxSize < w ? maxSize : w, maxSize < h ? maxSize : h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    auto newFilePath = QDir::tempPath() + "/" + QUuid::createUuid().toString() + ".jpg";
+
+    QFile file(newFilePath);
+    file.open(QIODevice::WriteOnly);
+    pixmap.save(&file, "jpeg", 75);
+    file.close();
+
+    return convert_to_cstring(newFilePath.toUtf8());
+}
