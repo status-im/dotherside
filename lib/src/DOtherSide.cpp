@@ -29,6 +29,7 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtCore>
+#include <QtGui/QTextDocumentFragment>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
@@ -1168,3 +1169,8 @@ DosQObject* dos_qpointer_data(DosQPointer *self)
 }
 
 #include "DOtherSide.moc"
+
+char *dos_plain_text(char* htmlString)
+{
+    return convert_to_cstring(QTextDocumentFragment::fromHtml( htmlString ).toPlainText().toUtf8());
+}

@@ -98,6 +98,8 @@ DOS_API void DOS_CALL dos_qapplication_exec(void);
 /// \note This method was created because status-go has a non-QT event loop
 DOS_API void DOS_CALL dos_signal(DosQObject *vptr, const char *signal, const char *slot);
 
+DOS_API char * DOS_CALL dos_plain_text(char* htmlString);
+
 /// \brief Sets the application icon
 DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
 
