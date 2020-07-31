@@ -34,6 +34,7 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QImage>
 #include <QtGui/QColorSpace>
+#include <QtGui/QTextDocumentFragment>
 #include <QtCore/QFile>
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
@@ -1110,6 +1111,11 @@ void dos_qncm_delete(::DosQNetworkConfigurationManager *vptr)
 {
     auto ncm = static_cast<QNetworkConfigurationManager *>(vptr);
     delete ncm;
+}
+
+char *dos_plain_text(char* htmlString)
+{
+    return convert_to_cstring(QTextDocumentFragment::fromHtml( htmlString ).toPlainText().toUtf8());
 }
 
 char *dos_image_resizer(char* imagePath, int maxSize, char* tmpDirPath)
