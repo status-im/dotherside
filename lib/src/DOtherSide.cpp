@@ -1174,3 +1174,8 @@ char *dos_plain_text(char* htmlString)
 {
     return convert_to_cstring(QTextDocumentFragment::fromHtml( htmlString ).toPlainText().toUtf8());
 }
+
+char *dos_escape_html(char* input)
+{
+   return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
+}
