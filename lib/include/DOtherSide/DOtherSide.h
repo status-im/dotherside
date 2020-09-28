@@ -102,6 +102,8 @@ DOS_API char * DOS_CALL dos_plain_text(char* htmlString);
 
 DOS_API char * DOS_CALL dos_escape_html(char* input);
 
+DOS_API char * DOS_CALL dos_qurl_fromUserInput(char* input);
+
 /// \brief Sets the application icon
 DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
 

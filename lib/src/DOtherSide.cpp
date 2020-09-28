@@ -1179,3 +1179,8 @@ char *dos_escape_html(char* input)
 {
    return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
 }
+
+char *dos_qurl_fromUserInput(char* input)
+{
+    return convert_to_cstring(QUrl::fromUserInput(QString(input)).toString());
+}
