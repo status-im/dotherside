@@ -104,6 +104,10 @@ DOS_API char * DOS_CALL dos_escape_html(char* input);
 
 DOS_API char * DOS_CALL dos_qurl_fromUserInput(char* input);
 
+DOS_API char * DOS_CALL dos_qurl_host(char* host);
+
+DOS_API char * DOS_CALL dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix);
+
 /// \brief Sets the application icon
 DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
 
