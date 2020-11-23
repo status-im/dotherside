@@ -74,6 +74,8 @@ typedef void DosQHashIntQByteArray;
 /// A pointer to a QUrl
 typedef void DosQUrl;
 
+typedef void DosQQmlNetworkAccessManagerFactory;
+
 /// A pointer to a QMetaObject
 typedef void DosQMetaObject;
 
