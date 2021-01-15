@@ -200,6 +200,9 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_delete(DosQQmlApplicationEngine 
 /// \return A new QQuickImageProvider
 /// \note The returned QQuickImageProvider should be freed by using dos_qquickimageprovider_delete(DosQQuickImageProvider*) unless the QQuickImageProvider has been bound to a QQmlApplicationEngine
 DOS_API DosQQuickImageProvider *DOS_CALL dos_qquickimageprovider_create(RequestPixmapCallback callback);
+
+DOS_API DosQQuickImageProvider *DOS_CALL dos_ipfsasyncimageprovider_create(const char* ipfsTmpDir, const char* ipfsGateway);
+
 /// \breif Frees a QQuickImageProvider
 DOS_API void DOS_CALL dos_qquickimageprovider_delete(DosQQuickImageProvider *vptr);
 /// @}

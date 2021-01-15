@@ -19,6 +19,7 @@ macro(add_target name type)
         include/DOtherSide/DosQMetaObject.h
         include/DOtherSide/DosIQAbstractItemModelImpl.h
         include/DOtherSide/DosQAbstractItemModel.h
+        include/DOtherSide/AsyncImageResponse.h
         include/DOtherSide/Utils.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
@@ -28,6 +29,7 @@ macro(add_target name type)
         src/DosQObjectImpl.cpp
         src/DosQAbstractItemModel.cpp
         src/DosQQuickImageProvider.cpp
+        src/AsyncImageResponse.cpp
     )
 
     if (WIN32)

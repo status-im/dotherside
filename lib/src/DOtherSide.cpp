@@ -25,6 +25,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QModelIndex>
 #include <QtCore/QHash>
+#include <QtCore/QThreadPool>
 #include <QtCore/QResource>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
@@ -43,7 +44,9 @@
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
+#include <QtQuick/QQuickImageResponse>
 #include <QtQuick/QQuickImageProvider>
+#include <QtQuick/QQuickAsyncImageProvider>
 #include <QTranslator>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
@@ -57,6 +60,8 @@
 #include "DOtherSide/DosQAbstractItemModel.h"
 #include "DOtherSide/DosQDeclarative.h"
 #include "DOtherSide/DosQQuickImageProvider.h"
+#include "DOtherSide/AsyncImageResponse.h"
+
 
 namespace {
 
@@ -66,6 +71,32 @@ void register_meta_types()
 }
 
 }
+
+class IPFSAsyncImageProvider : public QQuickAsyncImageProvider
+{
+public:
+    explicit IPFSAsyncImageProvider(const char* ipfsTmpDir, const char* ipfsGateway){
+        m_gateway = QString(ipfsGateway);
+        m_cacheDir = QString(ipfsTmpDir);
+    }
+
+    QQuickImageResponse *requestImageResponse(const QString &id, const QSize &requestedSize) override
+    {
+        QNetworkRequest ipfsNetRequest(QUrl(m_gateway + id));
+        ipfsNetRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+        return new AsyncImageResponse(ipfsNetRequest, requestedSize, m_cacheDir);
+    }
+
+private:
+    QString m_gateway;
+    QString m_cacheDir;
+};
+
+::DosQQuickImageProvider *dos_ipfsasyncimageprovider_create(const char* ipfsTmpDir, const char* ipfsGateway)
+{
+    return new IPFSAsyncImageProvider(ipfsTmpDir, ipfsGateway);
+}
+
 
 // jrainville: I'm not sure where to put this, but it works like so
 QTranslator *m_translator = new QTranslator();
