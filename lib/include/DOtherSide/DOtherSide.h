@@ -143,6 +143,8 @@ DOS_API DosQQmlNetworkAccessManagerFactory *DOS_CALL dos_qqmlnetworkaccessmanage
 DOS_API void DOS_CALL dos_qqmlnetworkaccessmanager_clearconnectioncache(DosQQmlNetworkAccessManager *vptr);
 DOS_API void DOS_CALL dos_qqmlnetworkaccessmanager_setnetworkaccessible(DosQQmlNetworkAccessManager *vptr, int accessibility);
 
+DOS_API void DOS_CALL dos_qqmldebuggingenabler_create(int portNumber);
+
 /// \brief Calls the QQmlApplicationEngine::load function
 /// \param vptr The QQmlApplicationEngine
 /// \param filename The file to load. The file is relative to the directory that contains the application executable

@@ -40,6 +40,8 @@ macro(add_target name type)
 
     target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network)
 
+    TARGET_COMPILE_DEFINITIONS(${name} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+    
     # for DOtherSide.pc
     set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus")
     if (${Qt5QuickControls2_FOUND})

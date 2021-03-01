@@ -57,6 +57,7 @@
 #include "DOtherSide/DosQAbstractItemModel.h"
 #include "DOtherSide/DosQDeclarative.h"
 #include "DOtherSide/DosQQuickImageProvider.h"
+#include <QQmlDebuggingEnabler>
 
 namespace {
 
@@ -183,6 +184,11 @@ void dos_qapplication_icon(const char *filename)
 void dos_qapplication_quit()
 {
     qApp->quit();
+}
+
+void dos_qqmldebuggingenabler_create(int portNumber)
+{
+    QQmlDebuggingEnabler::startTcpDebugServer(portNumber, QQmlDebuggingEnabler::DoNotWaitForClient, QString(""));
 }
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
