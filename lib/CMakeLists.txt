@@ -26,6 +26,7 @@ macro(add_target name type)
         include/DOtherSide/Utils.h
         include/DOtherSide/DosQtCompatUtils.h
         include/DOtherSide/DosLambdaInvoker.h
+        include/DOtherSide/DosDockClicker.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
         src/DosQDeclarative.cpp
@@ -35,6 +36,7 @@ macro(add_target name type)
         src/DosQAbstractItemModel.cpp
         src/DosQQuickImageProvider.cpp
         src/DosLambdaInvoker.cpp
+        src/DosDockClicker.cpp
     )
 
     if (WIN32)
