@@ -60,12 +60,55 @@
 #include "DOtherSide/DosDockClicker.h"
 #include "DOtherSide/DOtherSideStatusWindow.h"
 
+#include "qqmlsortfilterproxymodel.h"
+#include "filters/valuefilter.h"
+#include "filters/indexfilter.h"
+#include "filters/regexpfilter.h"
+#include "filters/rangefilter.h"
+#include "filters/expressionfilter.h"
+#include "filters/anyoffilter.h"
+#include "filters/alloffilter.h"
+#include "filters/filtercontainer.h"
+#include "filters/filtercontainerfilter.h"
+#include "proxyroles/expressionrole.h"
+#include "proxyroles/joinrole.h"
+#include "proxyroles/switchrole.h"
+#include "proxyroles/regexprole.h"
+#include "proxyroles/filterrole.h"
+#include "sorters/expressionsorter.h"
+#include "sorters/filtersorter.h"
+#include "sorters/rolesorter.h"
+#include "sorters/stringsorter.h"
+
 namespace {
 
 void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
+
+    qmlRegisterType<qqsfpm::QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
+    qmlRegisterUncreatableType<qqsfpm::Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
+    qmlRegisterType<qqsfpm::ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
+    qmlRegisterType<qqsfpm::IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
+    qmlRegisterType<qqsfpm::RegExpFilter>("SortFilterProxyModel", 0, 2, "RegExpFilter");
+    qmlRegisterType<qqsfpm::RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
+    qmlRegisterType<qqsfpm::ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
+    qmlRegisterType<qqsfpm::AnyOfFilter>("SortFilterProxyModel", 0, 2, "AnyOf");
+    qmlRegisterType<qqsfpm::AllOfFilter>("SortFilterProxyModel", 0, 2, "AllOf");
+    qmlRegisterUncreatableType<qqsfpm::FilterContainerAttached>("SortFilterProxyModel", 0, 2, "FilterContainer", "FilterContainer can only be used as an attaching type");
+    qmlRegisterUncreatableType<qqsfpm::ProxyRole>("SortFilterProxyModel", 0, 2, "ProxyRole", "ProxyRole is an abstract class");
+    qmlRegisterType<qqsfpm::JoinRole>("SortFilterProxyModel", 0, 2, "JoinRole");
+    qmlRegisterType<qqsfpm::SwitchRole>("SortFilterProxyModel", 0, 2, "SwitchRole");
+    qmlRegisterType<qqsfpm::ExpressionRole>("SortFilterProxyModel", 0, 2, "ExpressionRole");
+    qmlRegisterType<qqsfpm::RegExpRole>("SortFilterProxyModel", 0, 2, "RegExpRole");
+    qmlRegisterType<qqsfpm::FilterRole>("SortFilterProxyModel", 0, 2, "FilterRole");
+    qmlRegisterUncreatableType<qqsfpm::Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
+    qmlRegisterType<qqsfpm::RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
+    qmlRegisterType<qqsfpm::StringSorter>("SortFilterProxyModel", 0, 2, "StringSorter");
+    qmlRegisterType<qqsfpm::FilterSorter>("SortFilterProxyModel", 0, 2, "FilterSorter");
+    qmlRegisterType<qqsfpm::ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
+    qmlRegisterUncreatableType<qqsfpm::SorterContainerAttached>("SortFilterProxyModel", 0, 2, "SorterContainer", "SorterContainer can only be used as an attaching type");
 }
 
 }
