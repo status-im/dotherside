@@ -28,7 +28,6 @@
 #include <QtCore/QResource>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
-#include <QtNetwork/QNetworkConfigurationManager>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
@@ -481,7 +480,7 @@ void dos_qqmlcontext_setcontextproperty(::DosQQmlContext *vptr, const char *name
 {
     auto qobject = static_cast<QObject *>(value);
     auto result = new QVariant();
-    result->setValue<QObject *>(qobject);
+    result->setValue(qobject);
     return result;
 }
 
@@ -629,7 +628,7 @@ void dos_qvariant_setQObject(::DosQVariant *vptr, ::DosQObject *value)
 {
     auto variant = static_cast<QVariant *>(vptr);
     auto qobject = static_cast<QObject *>(value);
-    variant->setValue<QObject *>(qobject);
+    variant->setValue(qobject);
 }
 
 void dos_qvariant_setArray(::DosQVariant *vptr, int size, ::DosQVariant **array)
@@ -775,7 +774,7 @@ bool dos_qmodelindex_isValid(const ::DosQModelIndex *vptr)
 ::DosQModelIndex *dos_qmodelindex_child(const ::DosQModelIndex *vptr, int row, int column)
 {
     auto index = static_cast<const QModelIndex *>(vptr);
-    auto result = new QModelIndex(index->child(row, column));
+    auto result = new QModelIndex(index->model()->index(row, column, *index));
     return static_cast<QModelIndex *>(result);
 }
 
@@ -1069,7 +1068,8 @@ void dos_qabstractitemmodel_dataChanged(::DosQAbstractItemModel *vptr,
     auto model = dynamic_cast<DOS::DosIQAbstractItemModelImpl *>(object);
     auto topLeft = static_cast<const QModelIndex *>(topLeftIndex);
     auto bottomRight = static_cast<const QModelIndex *>(bottomRightIndex);
-    auto roles = QVector<int>::fromStdVector(std::vector<int>(rolesArrayPtr, rolesArrayPtr + rolesArrayLength));
+    auto v = std::vector<int>(rolesArrayPtr, rolesArrayPtr + rolesArrayLength);
+    QVector<int> roles(v.begin(), v.end());
     model->publicDataChanged(*topLeft, *bottomRight, roles);
 }
 
