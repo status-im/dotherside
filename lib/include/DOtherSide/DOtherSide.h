@@ -66,7 +66,7 @@ DOS_API void DOS_CALL dos_qapplication_initialize_opengl(void);
 
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
-DOS_API void DOS_CALL dos_qguiapplication_create(void);
+DOS_API void DOS_CALL dos_qguiapplication_create();
 
 /// \brief Calls the QGuiApplication::exec() function of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
@@ -80,6 +80,9 @@ DOS_API void DOS_CALL dos_qguiapplication_quit(void);
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
+DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
+
+DOS_API void dos_qguiapplication_installEventFilter(DosQQmlApplicationEngine *vptr);
 
 DOS_API void dos_qapplication_clipboard_setText(const char* text);
 
@@ -93,7 +96,7 @@ DOS_API void dos_qapplication_installEventFilter(DosQQmlApplicationEngine *vptr)
 
 /// \brief Create a QApplication
 /// \note The created QApplication should be freed by calling dos_qapplication_delete()
-DOS_API void DOS_CALL dos_qapplication_create(char *filename);
+DOS_API void DOS_CALL dos_qapplication_create();
 
 /// \brief Calls the QApplication::exec() function of the current QGuiApplication
 /// \note A QApplication should have been already created through dos_qapplication_create()

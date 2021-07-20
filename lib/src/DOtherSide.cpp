@@ -130,8 +130,7 @@ void dos_qapplication_initialize_opengl()
 void dos_qguiapplication_create()
 {
     static int argc = 1;
-    static char empty[1] = {0};
-    static char *argv[] = {empty};
+    static char *argv[] = {"Status"};
 
     register_meta_types();
 
@@ -158,10 +157,21 @@ void dos_qguiapplication_quit()
     qGuiApp->quit();
 }
 
-void dos_qapplication_create(char *appName)
+void dos_qguiapplication_icon(const char *filename)
+{
+    qGuiApp->setWindowIcon(QIcon(filename));
+}
+
+void dos_qguiapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
+{
+    DockClicker *dockClicker = new DockClicker(vptr);
+    qGuiApp->installEventFilter(dockClicker);
+}
+
+void dos_qapplication_create()
 {
     static int argc = 1;
-    static char *argv[] = {appName};
+    static char *argv[] = {"Status"};
 
     register_meta_types();
 
