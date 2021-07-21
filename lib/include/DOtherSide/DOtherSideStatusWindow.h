@@ -19,6 +19,7 @@ public:
 
 signals:
     void isFullScreenChanged();
+    void secondInstanceDetected();
 
 private:
     void removeTitleBar();
