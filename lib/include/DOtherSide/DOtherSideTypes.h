@@ -94,6 +94,9 @@ typedef void DosQPointer;
 /// A pointer to a Lambda invoker
 typedef void DosQMetaObjectConnection;
 
+/// A pointer to SingleInstance
+typedef void DosSingleInstance;
+
 /// A pixmap callback to be supplied to an image provider
 /// \param id Image source id
 /// \param width pointer to the width of the image
