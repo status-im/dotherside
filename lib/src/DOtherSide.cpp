@@ -226,7 +226,7 @@ void dos_qqmlapplicationengine_load_data(::DosQQmlApplicationEngine *vptr, const
     engine->loadData(data);
 }
 
-void dos_qapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage)
+void dos_qapplication_load_translation(::DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate)
 {
     if (!m_translator->isEmpty()) {
         QCoreApplication::removeTranslator(m_translator);
@@ -234,7 +234,7 @@ void dos_qapplication_load_translation(::DosQQmlApplicationEngine *vptr, const c
     if (m_translator->load(translationPackage)) {
         QCoreApplication::installTranslator(m_translator);
         auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-        engine->retranslate();
+        if (shouldRetranslate) engine->retranslate();
     } else {
         printf("Failed to load translation file %s\n", translationPackage);
     }
