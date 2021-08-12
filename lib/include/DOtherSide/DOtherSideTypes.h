@@ -97,6 +97,9 @@ typedef void DosQMetaObjectConnection;
 /// A pointer to SingleInstance
 typedef void DosSingleInstance;
 
+/// A pointer to a status event object which is actualy a QObject
+typedef void DosStatusEventObject;
+
 /// A pixmap callback to be supplied to an image provider
 /// \param id Image source id
 /// \param width pointer to the width of the image

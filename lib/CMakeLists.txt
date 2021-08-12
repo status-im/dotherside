@@ -26,7 +26,8 @@ macro(add_target name type)
         include/DOtherSide/Utils.h
         include/DOtherSide/DosQtCompatUtils.h
         include/DOtherSide/DosLambdaInvoker.h
-        include/DOtherSide/DosDockClicker.h
+        include/DOtherSide/StatusEvents/StatusDockShowAppEvent.h
+        include/DOtherSide/StatusEvents/StatusOSThemeEvent.h
         include/DOtherSide/DOtherSideSingleInstance.h
         src/DOtherSide.cpp
         src/DosQMetaObject.cpp
@@ -37,7 +38,8 @@ macro(add_target name type)
         src/DosQAbstractItemModel.cpp
         src/DosQQuickImageProvider.cpp
         src/DosLambdaInvoker.cpp
-        src/DosDockClicker.cpp
+        src/StatusEvents/StatusDockShowAppEvent.cpp
+        src/StatusEvents/StatusOSThemeEvent.cpp
         src/DOtherSideSingleInstance.cpp
     )
 
