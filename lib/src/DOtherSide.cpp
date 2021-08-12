@@ -56,8 +56,10 @@
 #include "DOtherSide/DosQAbstractItemModel.h"
 #include "DOtherSide/DosQDeclarative.h"
 #include "DOtherSide/DosQQuickImageProvider.h"
-#include "DOtherSide/DosDockClicker.h"
 #include "DOtherSide/DOtherSideSingleInstance.h"
+
+#include "DOtherSide/StatusEvents/StatusDockShowAppEvent.h"
+#include "DOtherSide/StatusEvents/StatusOSThemeEvent.h"
 
 namespace {
 
@@ -147,7 +149,8 @@ void dos_qguiapplication_exec()
 
 void dos_qguiapplication_quit()
 {
-    qGuiApp->quit();
+    // This way we will be safe for quitting the app (avoid potential crashes).
+    QMetaObject::invokeMethod(qGuiApp, "quit", Qt::QueuedConnection);
 }
 
 void dos_qguiapplication_icon(const char *filename)
@@ -155,10 +158,10 @@ void dos_qguiapplication_icon(const char *filename)
     qGuiApp->setWindowIcon(QIcon(filename));
 }
 
-void dos_qguiapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
+void dos_qguiapplication_installEventFilter(::DosStatusEventObject* vptr)
 {
-    DockClicker *dockClicker = new DockClicker(vptr);
-    qGuiApp->installEventFilter(dockClicker);
+    auto qobject = static_cast<QObject*>(vptr);
+    qGuiApp->installEventFilter(qobject);
 }
 
 void dos_qapplication_create()
@@ -188,13 +191,14 @@ void dos_qapplication_icon(const char *filename)
 
 void dos_qapplication_quit()
 {
-    qApp->quit();
+    // This way we will be safe for quitting the app (avoid potential crashes).
+    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 
-void dos_qapplication_installEventFilter(::DosQQmlApplicationEngine *vptr)
+void dos_qapplication_installEventFilter(::DosStatusEventObject* vptr)
 {
-    DockClicker *dockClicker = new DockClicker(vptr);
-    qApp->installEventFilter(dockClicker);
+    auto qobject = static_cast<QObject*>(vptr);
+    qApp->installEventFilter(qobject);
 }
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
@@ -1304,4 +1308,22 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
         return dsi->isFirstInstance();
     }
     return false;
+}
+
+::DosStatusEventObject* dos_statusevent_create_showAppEvent(::DosQQmlApplicationEngine* vptr)
+{
+    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
+    return new StatusDockShowAppEvent(engine);
+}
+
+::DosStatusEventObject* dos_statusevent_create_osThemeEvent(::DosQQmlApplicationEngine* vptr)
+{
+    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
+    return new StatusOSThemeEvent(engine);
+}
+
+void dos_statusevent_delete(DosStatusEventObject* vptr)
+{
+    auto qobject = static_cast<QObject*>(vptr);
+    qobject->deleteLater();
 }
