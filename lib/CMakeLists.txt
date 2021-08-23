@@ -6,35 +6,14 @@ include(GNUInstallDirs)
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network REQUIRED)
 
-    add_library(${name} ${type}
-        include/DOtherSide/DOtherSideTypes.h
-        include/DOtherSide/DOtherSideTypesCpp.h
-        include/DOtherSide/DOtherSide.h
-        include/DOtherSide/DosQDeclarative.h
-        include/DOtherSide/DosQObjectWrapper.h
-        include/DOtherSide/DosQAbstractItemModelWrapper.h
-        include/DOtherSide/DosQObject.h
-        include/DOtherSide/DosQObjectImpl.h
-        include/DOtherSide/DosIQObjectImpl.h
-        include/DOtherSide/DosQMetaObject.h
-        include/DOtherSide/DosIQAbstractItemModelImpl.h
-        include/DOtherSide/DosQAbstractItemModel.h
-        include/DOtherSide/Utils.h
-        include/DOtherSide/StatusEvents/StatusDockShowAppEvent.h
-        include/DOtherSide/StatusEvents/StatusOSThemeEvent.h
-        include/DOtherSide/DOtherSideSingleInstance.h
-        src/DOtherSide.cpp
-        src/DosQMetaObject.cpp
-        src/DosQDeclarative.cpp
-        src/DosQObject.cpp
-        src/DOtherSideTypesCpp.cpp
-        src/DosQObjectImpl.cpp
-        src/DosQAbstractItemModel.cpp
-        src/DosQQuickImageProvider.cpp
-        src/StatusEvents/StatusDockShowAppEvent.cpp
-        src/StatusEvents/StatusOSThemeEvent.cpp
-        src/DOtherSideSingleInstance.cpp
-    )
+    file(GLOB_RECURSE HEADERS include/DOtherSide/*.h)
+    if(APPLE)
+        file(GLOB_RECURSE SOURCES src/*.cpp src/*.mm)
+    else()
+        file(GLOB_RECURSE SOURCES src/*.cpp)
+    endif()
+
+    add_library(${name} ${type} ${SOURCES} ${HEADERS})
 
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
