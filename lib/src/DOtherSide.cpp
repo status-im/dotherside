@@ -25,6 +25,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QPointer>
 #include <QtCore/QResource>
+#include <QtCore/QFile>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtGui/QGuiApplication>
@@ -110,9 +111,16 @@ char *dos_qcoreapplication_application_dir_path()
     return convert_to_cstring(QCoreApplication::applicationDirPath());
 }
 
-void dos_qapplication_enable_hdpi()
+void dos_qapplication_enable_hdpi(const char *uiScaleFilePath)
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+
+    QFile scaleFile(QString::fromUtf8(uiScaleFilePath));
+    if (scaleFile.open(QIODevice::ReadOnly)) {
+        const auto scale = scaleFile.readAll();
+        qputenv("QT_SCALE_FACTOR", scale);
+    }
 }
 
 void dos_qapplication_initialize_opengl()
