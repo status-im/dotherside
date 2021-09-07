@@ -82,6 +82,9 @@ typedef void DosQMetaObject;
 /// A pointer to a QObject
 typedef void DosQObject;
 
+/// A pointer to a QSettings
+typedef void DosQSettings;
+
 /// A pointer to a QQuickImageProvider
 typedef void DosQQuickImageProvider;
 
