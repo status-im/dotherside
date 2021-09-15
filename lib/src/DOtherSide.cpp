@@ -1341,3 +1341,8 @@ void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr)
     if(qobject)
         qobject->deleteLater();
 }
+
+char* dos_to_local_file(const char* filePath)
+{
+    return convert_to_cstring(QUrl(QString::fromUtf8(filePath)).toLocalFile());
+}
