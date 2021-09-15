@@ -1047,11 +1047,13 @@ DOS_API void dos_statusevent_delete(DosStatusEventObject* vptr);
 
 /// Status notification object
 DOS_API DosStatusOSNotificationObject* dos_statusosnotification_create();
-DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr, 
+DOS_API void dos_statusosnotification_show_notification(DosStatusOSNotificationObject* vptr,
     const char* title, const char* message, const char* identifier);
 DOS_API void dos_statusosnotification_delete(DosStatusOSNotificationObject* vptr);
 
-DOS_API char *dos_to_local_file(const char* filePath);
+DOS_API char *dos_to_local_file(const char* fileUrl);
+
+DOS_API char *dos_from_local_file(const char* filePath);
 
 #ifdef __cplusplus
 }
