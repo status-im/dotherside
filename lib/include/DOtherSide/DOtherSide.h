@@ -44,25 +44,21 @@ extern "C"
 {
 #endif
 
-/// \defgroup QGuiApplication QGuiApplication
-/// \brief Functions related to the QGuiApplication class
-/// @{
-
 /// \brief Return the QCore::applicationDirPath
 /// \return The QCore::applicationDirPath as a UTF-8 string
 /// \note The returned string should be deleted by the calling code by using
 /// the dos_chararray_delete() function
-DOS_API char *DOS_CALL dos_qcoreapplication_application_dir_path(void);
+DOS_API char *DOS_CALL dos_qguiapplication_application_dir_path(void);
 
 /// \brief Force the event loop to spin and process the given events
 DOS_API void DOS_CALL dos_qcoreapplication_process_events(DosQEventLoopProcessEventFlag flags);
 
 /// \brief Force the event loop to spin and process the given events until no more available or timed out
-DOS_API void DOS_CALL dos_qcoreapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms);
+DOS_API void DOS_CALL dos_qguiapplication_process_events_timed(DosQEventLoopProcessEventFlag flags, int ms);
 
-DOS_API void DOS_CALL dos_qapplication_enable_hdpi(const char *uiScaleFilePath);
+DOS_API void DOS_CALL dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath);
 
-DOS_API void DOS_CALL dos_qapplication_initialize_opengl(void);
+DOS_API void DOS_CALL dos_qguiapplication_initialize_opengl(void);
 
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
@@ -84,21 +80,11 @@ DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
 DOS_API void dos_qguiapplication_installEventFilter(DosEvent *vptr);
 
-DOS_API void dos_qapplication_installEventFilter(DosEvent *vptr);
+DOS_API void dos_qguiapplication_installEventFilter(DosStatusEventObject *vptr);
 
-/// @}
-
-/// \defgroup QApplication QApplication
-/// \brief Functions related to the QApplication class
-/// @{
-
-/// \brief Create a QApplication
-/// \note The created QApplication should be freed by calling dos_qapplication_delete()
-DOS_API void DOS_CALL dos_qapplication_create();
-
-/// \brief Calls the QApplication::exec() function of the current QGuiApplication
-/// \note A QApplication should have been already created through dos_qapplication_create()
-DOS_API void DOS_CALL dos_qapplication_exec(void);
+/// \brief Calls the QGuiApplication::exec() function of the current QGuiApplication
+/// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
+DOS_API void DOS_CALL dos_qguiapplication_exec(void);
 
 /// \brief Invokes a QObject's slot by passing a string containing a signal
 /// \note This method was created because status-go has a non-QT event loop
@@ -115,15 +101,15 @@ DOS_API char * DOS_CALL dos_qurl_host(char* host);
 DOS_API char * DOS_CALL dos_qurl_replaceHostAndAddPath(char* url, char* newScheme, char* newHost, char* pathPrefix);
 
 /// \brief Sets the application icon
-DOS_API void DOS_CALL dos_qapplication_icon(const char *filename);
+DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
-/// \brief Calls the QApplication::quit() function of the current QGuiApplication
-/// \note A QApplication should have been already created through dos_qapplication_create()
-DOS_API void DOS_CALL dos_qapplication_quit(void);
+/// \brief Calls the QGuiApplication::quit() function of the current QGuiApplication
+/// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
+DOS_API void DOS_CALL dos_qguiapplication_quit(void);
 
-/// \brief Free the memory of the current QApplication
-/// \note A QApplication should have been already created through dos_qapplication_create()
-DOS_API void DOS_CALL dos_qapplication_delete(void);
+/// \brief Free the memory of the current QGuiApplication
+/// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
+DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 /// @}
 
@@ -159,7 +145,7 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_load_data(DosQQmlApplicationEngi
 /// \param vptr The QQmlApplicationEngine
 /// \param data The UTF-8 string of the path to the translation file (.qm)
 /// \param shouldRetranslate Should retranslate() be called after loading a translation
-DOS_API void DOS_CALL dos_qapplication_load_translation(DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate);
+DOS_API void DOS_CALL dos_qguiapplication_load_translation(DosQQmlApplicationEngine *vptr, const char* translationPackage, bool shouldRetranslate);
 
 /// \brief Calls the QQmlApplicationEngine::addImportPath function
 /// \param vptr The QQmlApplicationEngine
