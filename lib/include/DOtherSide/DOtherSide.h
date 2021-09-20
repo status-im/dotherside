@@ -80,8 +80,6 @@ DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
 DOS_API void dos_qguiapplication_installEventFilter(DosEvent *vptr);
 
-DOS_API void dos_qguiapplication_installEventFilter(DosStatusEventObject *vptr);
-
 /// \brief Calls the QGuiApplication::exec() function of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_exec(void);
