@@ -122,6 +122,8 @@ DOS_API DosQQmlApplicationEngine *DOS_CALL dos_qqmlapplicationengine_create(void
 
 DOS_API DosQQmlNetworkAccessManagerFactory *DOS_CALL dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath);
 
+DOS_API void DOS_CALL dos_add_self_signed_certificate(const char* pemCertificateContent);
+
 /// \brief Calls the QQmlApplicationEngine::load function
 /// \param vptr The QQmlApplicationEngine
 /// \param filename The file to load. The file is relative to the directory that contains the application executable
