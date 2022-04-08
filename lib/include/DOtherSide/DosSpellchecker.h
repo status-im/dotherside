@@ -16,6 +16,7 @@ class SpellChecker : public QObject
     Q_OBJECT
     Q_PROPERTY(QString lang READ lang WRITE setLang NOTIFY langChanged)
     Q_PROPERTY(QString userDict READ userDict WRITE setUserDict NOTIFY userDictChanged)
+    Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 
 public:
     explicit SpellChecker(QObject *parent = nullptr);
@@ -27,6 +28,9 @@ public:
     Q_INVOKABLE void addToUserWordlist(const QString &word);
     Q_INVOKABLE bool isInit() const;
 
+    bool enabled() const;
+    void setEnabled(bool enable);
+
     const QString& lang() const;
     void setLang(const QString& lang);
 
@@ -36,6 +40,7 @@ public:
 signals:
     void langChanged();
     void userDictChanged();
+    void enabledChanged();
 
 private:
     void initHunspell();
@@ -43,6 +48,7 @@ private:
 private:
     QString m_lang;
     QString m_userDict;
+    bool m_enabled;
 
     QQuickTextDocument *m_document;
 #ifdef Q_OS_MACOS

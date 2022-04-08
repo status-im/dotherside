@@ -21,6 +21,7 @@ SpellChecker::SpellChecker(QObject *parent)
     , m_hunspell(nullptr)
 #endif
     , m_userDict("userDict_")
+    , m_enabled(true)
 {
 
 }
@@ -32,10 +33,24 @@ SpellChecker::~SpellChecker()
 #endif
 }
 
+bool SpellChecker::enabled() const
+{
+    return m_enabled;
+}
+
+void SpellChecker::setEnabled(bool enable)
+{
+    if (m_enabled != enable) {
+        m_enabled = enable;
+        emit enabledChanged();
+    }
+}
+
 bool SpellChecker::spell(const QString &word)
 {
 #ifdef Q_OS_MACOS
-    return m_hunspell->spell(m_codec->fromUnicode(word).toStdString());
+    return m_enabled ? m_hunspell->spell(m_codec->fromUnicode(word).toStdString())
+                     : true;
 #else
     return true;
 #endif
