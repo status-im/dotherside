@@ -198,6 +198,11 @@ void dos_qguiapplication_clipboard_setImage(const char* text)
     QGuiApplication::clipboard()->setImage(image);
 }
 
+void dos_qqmldebuggingenabler_create(int portNumber)
+{
+    QQmlDebuggingEnabler::startTcpDebugServer(portNumber, QQmlDebuggingEnabler::DoNotWaitForClient, QString(""));
+}
+
 void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
 {
     QNetworkAccessManager *manager = new QNetworkAccessManager();

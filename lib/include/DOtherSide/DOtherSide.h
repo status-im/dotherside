@@ -127,6 +127,8 @@ DOS_API void DOS_CALL dos_qguiapplication_quit(void);
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
+DOS_API void DOS_CALL dos_qqmldebuggingenabler_create(int portNumber);
+
 /// @}
 
 /// \defgroup QQmlApplicationEngine QQmlApplicationEngine
