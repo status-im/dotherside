@@ -6,7 +6,7 @@ using namespace Status;
 
 bool UrlSchemeEvent::eventFilter(QObject* obj, QEvent* event)
 {
-#ifdef Q_OS_MACOS
+// #ifdef Q_OS_MACOS or Q_OS_WIN
     if (event->type() == QEvent::FileOpen)
     {
         QFileOpenEvent* fileEvent = static_cast<QFileOpenEvent*>(event);
@@ -15,7 +15,7 @@ bool UrlSchemeEvent::eventFilter(QObject* obj, QEvent* event)
             emit urlActivated(fileEvent->url().toString());
         }
     }
-#endif
+// #endif
 
     return QObject::eventFilter(obj, event);
 }
