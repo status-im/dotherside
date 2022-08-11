@@ -33,6 +33,11 @@ macro(add_target name type)
 
     target_link_libraries(${name} PRIVATE ${QTPREFIX}::Core ${QTPREFIX}::CorePrivate ${QTPREFIX}::Gui ${QTPREFIX}::Widgets ${QTPREFIX}::Qml ${QTPREFIX}::Quick)
 
+    target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
+    if(DEFINED QML_DEBUG_PORT)
+        target_compile_definitions(${name} PRIVATE QML_DEBUG_PORT=${QML_DEBUG_PORT})
+    endif()
+
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE ${QTPREFIX}::QuickControls2)
     endif()
