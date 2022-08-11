@@ -14,20 +14,19 @@ macro(add_target name type)
     endif()
 
     add_library(${name} ${type} ${SOURCES} ${HEADERS})
-
     if (WIN32)
         target_compile_definitions(${name} PRIVATE -DWIN32)
     endif()
 
     set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
-
+    
     if(APPLE)
         target_include_directories(${name} PUBLIC include include/Qt ${CMAKE_SOURCE_DIR}/../../bottles/hunspell/include)
     else()
         target_include_directories(${name} PUBLIC include include/Qt)
     endif()
 
-    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
+    target_link_libraries(${name} PRIVATE stb::stb ZXing Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
 
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
@@ -46,6 +45,13 @@ set(major 0)
 set(minor 6)
 set(patch 4)
 set(DOTHERSIDE_VERSION "${major}.${minor}.${patch}")
+
+set(BUILD_EXAMPLES OFF)
+set(BUILD_BLACKBOX_TESTS OFF)
+set(BUILD_SHARED_LIBS OFF)
+add_subdirectory(zxing-cpp)
+
+zxing_add_package_stb()
 
 # Add shared version
 if(ENABLE_DYNAMIC_LIBS)
