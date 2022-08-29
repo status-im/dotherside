@@ -37,7 +37,7 @@ ecm_setup_version(PROJECT
 set(EXCLUDE_DEPRECATED_BEFORE_AND_AT 0 CACHE STRING "Control the range of deprecated API excluded from the build [default=0].")
 
 # +Status customization
-set(BUILD_SHARED_LIBS 0)
+set(BUILD_SHARED_LIBS ${ENABLE_DYNAMIC_LIBS})
 set(BUILD_TESTING 0)
 # -Status customization
 

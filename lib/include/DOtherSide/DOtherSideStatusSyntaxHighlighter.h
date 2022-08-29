@@ -1,15 +1,19 @@
 #pragma once
 
 #include <KSyntaxHighlighting/SyntaxHighlighter>
+#include <KSyntaxHighlighting/Repository>
 
 class QQuickTextDocument;
 
 class StatusSyntaxHighlighter : public KSyntaxHighlighting::SyntaxHighlighter
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    StatusSyntaxHighlighter(QTextDocument *parent = nullptr);
+ public:
+  StatusSyntaxHighlighter(QTextDocument *parent = nullptr);
+
+ private:
+  std::unique_ptr<KSyntaxHighlighting::Repository> m_repository{nullptr};
 };
 
 class StatusSyntaxHighlighterHelper : public QObject
@@ -17,15 +21,15 @@ class StatusSyntaxHighlighterHelper : public QObject
   Q_OBJECT
   Q_PROPERTY(QQuickTextDocument *quickTextDocument READ quickTextDocument WRITE
                  setQuickTextDocument NOTIFY quickTextDocumentChanged)
-public:
+ public:
   StatusSyntaxHighlighterHelper(QObject *parent = nullptr)
       : QObject(parent) {}
   QQuickTextDocument *quickTextDocument() const;
   void setQuickTextDocument(QQuickTextDocument *quickTextDocument);
 
-signals:
+ signals:
   void quickTextDocumentChanged();
 
-private:
+ private:
   QQuickTextDocument *m_quicktextdocument{nullptr};
 };

@@ -5,15 +5,14 @@
 #include <QGuiApplication>
 
 #include <KSyntaxHighlighting/Definition>
-#include <KSyntaxHighlighting/Repository>
 #include <KSyntaxHighlighting/Theme>
 
 StatusSyntaxHighlighter::StatusSyntaxHighlighter(QTextDocument *parent)
     : KSyntaxHighlighting::SyntaxHighlighter(parent)
+    , m_repository(new KSyntaxHighlighting::Repository())
 {
-    KSyntaxHighlighting::Repository repository;
-    setTheme(repository.themeForPalette(qGuiApp->palette()));
-    setDefinition(repository.definitionForName(QStringLiteral("Markdown")));
+  setDefinition(m_repository->definitionForName(QStringLiteral("Markdown")));
+  setTheme(m_repository->themeForPalette(qApp->palette()));
 }
 
 QQuickTextDocument *StatusSyntaxHighlighterHelper::quickTextDocument() const
