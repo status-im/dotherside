@@ -19,7 +19,7 @@ macro(add_target name type)
         target_compile_definitions(${name} PRIVATE -DWIN32)
     endif()
 
-    set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
+    set_target_properties(${name} PROPERTIES CXX_STANDARD 17 AUTOMOC ON)
 
     if(APPLE)
         target_include_directories(${name} PUBLIC include include/Qt ${CMAKE_SOURCE_DIR}/../../bottles/hunspell/include)
@@ -27,7 +27,7 @@ macro(add_target name type)
         target_include_directories(${name} PUBLIC include include/Qt)
     endif()
 
-    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
+    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel KF5SyntaxHighlighting)
 
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
@@ -35,7 +35,7 @@ macro(add_target name type)
     endif()
 
     # for DOtherSide.pc
-    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia SortFilterProxyModel")
+    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia, SortFilterProxyModel, KF5SyntaxHighlighting")
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
         set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")
@@ -44,7 +44,7 @@ endmacro()
 
 set(major 0)
 set(minor 6)
-set(patch 4)
+set(patch 5)
 set(DOTHERSIDE_VERSION "${major}.${minor}.${patch}")
 
 # Add shared version
@@ -58,7 +58,7 @@ if(ENABLE_DYNAMIC_LIBS)
     install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
-endif(ENABLE_DYNAMIC_LIBS)
+endif()
 
 # Add static version
 if(ENABLE_STATIC_LIBS)
@@ -66,7 +66,7 @@ if(ENABLE_STATIC_LIBS)
     install(TARGETS ${PROJECT_NAME}Static
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
-endif(ENABLE_STATIC_LIBS)
+endif()
 
 # Install directive for header files
 install(FILES
@@ -78,4 +78,3 @@ install(FILES
 # pkg-config file
 configure_file(${CMAKE_SOURCE_DIR}/DOtherSide.pc.cmake ${CMAKE_BINARY_DIR}/DOtherSide.pc @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/DOtherSide.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
