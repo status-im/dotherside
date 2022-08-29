@@ -37,13 +37,11 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlNetworkAccessManagerFactory>
-#include <QtCore>
 #include <QClipboard>
 #include <QtGui/QPixmap>
 #include <QtGui/QImage>
 #include <QtGui/QColorSpace>
 #include <QtGui/QTextDocumentFragment>
-#include <QtCore/QFile>
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
