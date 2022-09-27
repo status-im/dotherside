@@ -42,6 +42,7 @@
 #include <QtQuick/QQuickImageProvider>
 #include <QTranslator>
 #include <QSettings>
+#include <QTimer>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
@@ -1520,8 +1521,72 @@ void dos_keychainmanager_delete(DosKeychainManager* vptr)
     auto qobject = static_cast<QObject*>(vptr);
     if(qobject)
         qobject->deleteLater();
-
 }
+
+#pragma region QTimer
+
+DosQTimer *dos_qtimer_create()
+{
+    return new QTimer();
+}
+
+void dos_qtimer_delete(DosQTimer *vptr)
+{
+    auto qobject = static_cast<QObject*>(vptr);
+    if(qobject)
+        qobject->deleteLater();
+}
+
+void dos_qtimer_set_interval(DosQTimer *vptr, int interval)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    if (timer) {
+        timer->setInterval(interval);
+    }
+}
+
+int dos_qtimer_interval(DosQTimer *vptr)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    return timer ? timer->interval() : -1;
+}
+
+void dos_qtimer_start(DosQTimer *vptr)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    if (timer) {
+        timer->start();
+    }
+}
+
+void dos_qtimer_stop(DosQTimer *vptr)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    if (timer) {
+        timer->stop();
+    }
+}
+
+void dos_qtimer_set_single_shot(DosQTimer *vptr, bool singleShot)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    if (timer) {
+        timer->setSingleShot(singleShot);
+    }
+}
+
+bool dos_qtimer_is_single_shot(DosQTimer *vptr)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    return timer ? timer->isSingleShot() : false;
+}
+
+bool dos_qtimer_is_active(DosQTimer *vptr)
+{
+    auto timer = static_cast<QTimer*>(vptr);
+    return timer ? timer->isActive() : false;
+}
+
 #pragma endregion
 
 char* dos_to_local_file(const char* fileUrl)
