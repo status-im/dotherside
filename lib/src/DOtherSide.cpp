@@ -385,7 +385,8 @@ void dos_qguiapplication_load_translation(::DosQQmlApplicationEngine *vptr, cons
     if (m_translator->load(translationPackage)) {
         bool success = QGuiApplication::installTranslator(m_translator);
         auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-        if (shouldRetranslate) engine->retranslate();
+        // IMPORTANT: Workaround to temporary resolve the crash we have when language is changed (`startupModule` is null and some qml bindings are still calling this dead pointer)
+        // if (shouldRetranslate) engine->retranslate();
     } else {
         printf("Failed to load translation file %s\n", translationPackage);
     }
