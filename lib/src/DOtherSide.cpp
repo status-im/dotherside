@@ -74,7 +74,7 @@ void register_meta_types()
 }
 
 // jrainville: I'm not sure where to put this, but it works like so
-QTranslator *m_translator = new QTranslator();
+static QTranslator *m_translator = new QTranslator();
 
 class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 {
@@ -87,9 +87,7 @@ class QMLNetworkAccessFactory : public QQmlNetworkAccessManagerFactory
 
         }
 
-        QNetworkAccessManager* create(QObject* parent);
-
-        void setTmpPath(const char* path);
+        QNetworkAccessManager* create(QObject* parent) override;
 };
 
 QString QMLNetworkAccessFactory::tmpPath = "";
