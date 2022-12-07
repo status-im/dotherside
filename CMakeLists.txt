@@ -5,6 +5,9 @@ project(DOtherSide
   DESCRIPTION "C language library for creating binding for the Qt QML language"
 )
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 option(ENABLE_DOCS "Enable docs" ON)
 option(ENABLE_TESTS "Enable tests" ON)
 option(ENABLE_DYNAMIC_LIBS "Enable dynamic libraries" ON)
