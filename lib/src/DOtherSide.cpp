@@ -69,11 +69,20 @@
 #include "DOtherSide/Status/UrlSchemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
 
+#ifdef MONITORING
+#include <QProcessEnvironment>
+#include "DOtherSide/Status/Monitoring/Monitor.h"
+#endif
+
 namespace {
 
 void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
+
+#ifdef MONITORING
+    qmlRegisterSingletonType<Monitor>("Monitoring", 1 , 0, "Monitor", &Monitor::qmlInstance);
+#endif
 }
 
 }
@@ -244,7 +253,18 @@ void dos_qguiapplication_installEventFilter(::DosEvent* vptr)
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
 {
+#ifdef MONITORING
+    auto engine = new QQmlApplicationEngine();
+    auto disabledValue = QStringLiteral("0");
+
+    if (QProcessEnvironment::systemEnvironment().value(
+            QStringLiteral("DISABLE_MONITORING_WINDOW"), disabledValue) == disabledValue)
+        Monitor::instance().initialize(engine);
+
+    return engine;
+#else
     return new QQmlApplicationEngine();
+#endif
 }
 
 ::DosQQmlNetworkAccessManagerFactory *dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath)
@@ -503,6 +523,10 @@ void dos_qqmlcontext_setcontextproperty(::DosQQmlContext *vptr, const char *name
     auto context = static_cast<QQmlContext *>(vptr);
     auto variant = static_cast<QVariant *>(value);
     context->setContextProperty(QString::fromUtf8(name), *variant);
+
+#ifdef MONITORING
+    Monitor::instance().addContextPropertyName(QString::fromUtf8(name));
+#endif
 }
 
 ::DosQVariant *dos_qvariant_create()
