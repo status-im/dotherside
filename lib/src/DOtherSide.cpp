@@ -66,7 +66,7 @@
 
 #ifdef MONITORING
 #include <QProcessEnvironment>
-#include "DOtherSide/Status/Monitoring/Monitor.h"
+#include "StatusDesktop/Monitoring/Monitor.h"
 #endif
 
 namespace {
