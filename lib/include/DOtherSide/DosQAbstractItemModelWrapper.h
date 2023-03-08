@@ -89,6 +89,8 @@ public:
     void publicEndInsertRows() final;
     void publicBeginRemoveRows(const QModelIndex &index, int first, int last) final;
     void publicEndRemoveRows() final;
+    void publicBeginMoveRows(const QModelIndex &index, int first, int last, const QModelIndex &destinationIndex, int destinationChild) final;
+    void publicEndMoveRows() final;
     void publicBeginInsertColumns(const QModelIndex &index, int first, int last) final;
     void publicEndInsertColumns() final;
     void publicBeginRemoveColumns(const QModelIndex &index, int first, int last) final;
@@ -278,6 +280,18 @@ template<typename T, int N, int M>
 void DosQAbstractItemModelWrapper<T, N, M>::publicEndRemoveRows()
 {
     m_dosImpl->publicEndRemoveRows();
+}
+
+template<typename T, int N, int M>
+void DosQAbstractItemModelWrapper<T, N, M>::publicBeginMoveRows(const QModelIndex &index, int first, int last, const QModelIndex &destinationIndex, int destinationChild)
+{
+    m_dosImpl->publicBeginMoveRows(index, first, last, destinationIndex, destinationChild);
+}
+
+template<typename T, int N, int M>
+void DosQAbstractItemModelWrapper<T, N, M>::publicEndMoveRows()
+{
+    m_dosImpl->publicEndMoveRows();
 }
 
 template<typename T, int N, int M>
