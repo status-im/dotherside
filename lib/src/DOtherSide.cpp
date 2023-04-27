@@ -329,9 +329,10 @@ void dos_qguiapplication_load_translation(::DosQQmlApplicationEngine *vptr, cons
         QGuiApplication::removeTranslator(&g_translator);
     }
     if (g_translator.load(translationPackage)) {
-        QGuiApplication::installTranslator(&g_translator);
+        bool success = QGuiApplication::installTranslator(&g_translator);
         auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-        if (shouldRetranslate) engine->retranslate();
+        if (engine && success && shouldRetranslate)
+            engine->retranslate();
     } else {
         printf("Failed to load translation file %s\n", translationPackage);
     }
