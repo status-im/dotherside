@@ -64,6 +64,7 @@
 #include "DOtherSide/Status/UrlSchemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
+#include "DOtherSide/Status/AppDelegate.h"
 
 #ifdef MONITORING
 #include <QProcessEnvironment>
@@ -231,6 +232,9 @@ void dos_qguiapplication_create()
     qInstallMessageHandler(myMessageOutput);
 
     new QGuiApplication(argc, argv);
+#ifdef Q_OS_MACOS
+    app_delegate::install();
+#endif
     register_meta_types();
 }
 
