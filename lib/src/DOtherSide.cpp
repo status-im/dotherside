@@ -67,7 +67,6 @@
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DOtherSideSingleInstance.h"
 
-#include "DOtherSide/Status/DockShowAppEvent.h"
 #include "DOtherSide/Status/OSThemeEvent.h"
 #include "DOtherSide/Status/UrlSchemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
@@ -1448,11 +1447,6 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
 }
 
 #pragma region Events
-::DosEvent* dos_event_create_showAppEvent(::DosQQmlApplicationEngine* vptr)
-{
-    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
-    return new Status::DockShowAppEvent(engine);
-}
 
 ::DosEvent* dos_event_create_osThemeEvent(::DosQQmlApplicationEngine* vptr)
 {
