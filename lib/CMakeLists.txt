@@ -5,10 +5,10 @@ set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the m
 
 set(QTPREFIX "Qt")
 
-find_package(Qt6 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets QUIET)
+find_package(Qt6 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView QUIET)
 if (NOT Qt6_FOUND)
     set(QTPREFIX "Qt5")
-    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets REQUIRED)
+    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView REQUIRED)
 endif()
 
 if(MONITORING)
@@ -40,7 +40,7 @@ macro(add_target name type)
 
     target_include_directories(${name} PUBLIC include)
 
-    target_link_libraries(${name} PRIVATE ${QTPREFIX}::Core ${QTPREFIX}::CorePrivate ${QTPREFIX}::Gui ${QTPREFIX}::Widgets ${QTPREFIX}::Qml ${QTPREFIX}::Quick)
+    target_link_libraries(${name} PRIVATE ${QTPREFIX}::Core ${QTPREFIX}::CorePrivate ${QTPREFIX}::Gui ${QTPREFIX}::Widgets ${QTPREFIX}::Qml ${QTPREFIX}::Quick ${QTPREFIX}::WebView)
 
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
