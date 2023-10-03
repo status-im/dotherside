@@ -11,7 +11,7 @@ endif()
 
 # Macro for merging common code between static and shared
 macro(add_target name type)
-    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network REQUIRED)
+    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network WebView REQUIRED)
 
     file(GLOB HEADERS include/DOtherSide/*.h include/DOtherSide/Status/*.h)
     file(GLOB SOURCES src/*.cpp src/Status/*.cpp)
@@ -48,7 +48,7 @@ macro(add_target name type)
 
     target_include_directories(${name} PUBLIC include include/Qt)
 
-    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network)
+    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::WebView)
 
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
@@ -63,7 +63,7 @@ macro(add_target name type)
     endif()
 
     # for DOtherSide.pc
-    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus")
+    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5WebView")
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
         set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")
