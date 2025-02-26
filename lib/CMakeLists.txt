@@ -32,7 +32,7 @@ macro(add_target name type)
         file(GLOB MONITORING_SOURCES src/Status/Monitoring/*.cpp)
     endif()
 
-    if(APPLE)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
         #prepend items because .mm files need build priority to override cpp impl
         list(PREPEND SOURCES ${MM_FILES})
@@ -53,6 +53,14 @@ macro(add_target name type)
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
         target_compile_definitions(${name} PRIVATE QML_DEBUG_PORT=${QML_DEBUG_PORT})
+    endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        find_library(AppKit AppKit)
+        find_library(Foundation Foundation)
+        find_library(Security Security)
+        find_library(LocalAuthentication LocalAuthentication)
+        target_link_libraries(${name} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
     endif()
 
     if(MONITORING)
