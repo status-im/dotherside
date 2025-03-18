@@ -1,5 +1,7 @@
 include(GNUInstallDirs)
 
+project(DOtherSide)
+
 option(MONITORING "Tools for real-time inspection of the application." OFF)
 set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the monitoring tool UI.")
 
@@ -78,11 +80,23 @@ if(ENABLE_DYNAMIC_LIBS)
         SOVERSION "${soversion}"
         VERSION "${CMAKE_PROJECT_VERSION}"
     )
+
+    # Install directive for binaries
+    install(TARGETS ${PROJECT_NAME}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
 endif(ENABLE_DYNAMIC_LIBS)
 
 # Add static version
 if(ENABLE_STATIC_LIBS)
     add_target(${PROJECT_NAME}Static STATIC)
+
+    # Install directive for binaries
+    install(TARGETS ${PROJECT_NAME}Static
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
 endif(ENABLE_STATIC_LIBS)
 
 # Install directive for header files
@@ -90,12 +104,6 @@ install(FILES
     include/DOtherSide/DOtherSide.h
     include/DOtherSide/DOtherSideTypes.h
     DESTINATION include/DOtherSide
-)
-
-# Install directive for binaries
-install(TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 # Install Pkg-Config definition
