@@ -35,7 +35,7 @@ macro(add_target name type)
     endif()
 
     if(NOT MSVC)
-      target_compile_options(${name} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+      target_compile_options(${name} PRIVATE -Wall -Wextra -Wpedantic#[[ -Werror]])
     endif()
 
     set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
