@@ -5,13 +5,9 @@ project(DOtherSide)
 option(MONITORING "Tools for real-time inspection of the application." OFF)
 set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the monitoring tool UI.")
 
-set(QTPREFIX "Qt")
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
 
-find_package(Qt6 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView QUIET)
-if (NOT Qt6_FOUND)
-    set(QTPREFIX "Qt5")
-    find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView REQUIRED)
-endif()
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView REQUIRED)
 
 if(MONITORING)
     include(../../../ui/MonitoringSources.cmake)
@@ -42,7 +38,7 @@ macro(add_target name type)
 
     target_include_directories(${name} PUBLIC include)
 
-    target_link_libraries(${name} PRIVATE ${QTPREFIX}::Core ${QTPREFIX}::CorePrivate ${QTPREFIX}::Gui ${QTPREFIX}::Widgets ${QTPREFIX}::Qml ${QTPREFIX}::Quick ${QTPREFIX}::WebView)
+    target_link_libraries(${name} PRIVATE Qt::Core Qt::CorePrivate Qt::Gui Qt::Widgets Qt::Qml Qt::Quick Qt::QuickControls2 Qt::WebView)
 
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
@@ -62,10 +58,6 @@ macro(add_target name type)
 
         target_compile_definitions(${name} PRIVATE MONITORING)
         target_compile_definitions(${name} PRIVATE MONITORING_QML_ENTRY_POINT="${MONITORING_QML_ENTRY_POINT}")
-    endif()
-
-    if (${Qt5QuickControls2_FOUND})
-        target_link_libraries(${name} PRIVATE ${QTPREFIX}::QuickControls2)
     endif()
 endmacro()
 
