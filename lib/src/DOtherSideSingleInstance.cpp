@@ -2,6 +2,7 @@
 
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QDebug>
 
 namespace {
     const int ReadWriteTimeoutMs = 1000;
