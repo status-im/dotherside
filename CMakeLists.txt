@@ -30,6 +30,7 @@ endif()
 
 if (MSVC)
   add_compile_options(/bigobj)
+  add_definitions(/MP)
 endif()
 
 add_subdirectory(lib)
