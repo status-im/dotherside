@@ -92,8 +92,8 @@ bool OSNotification::initNotificationWin()
 
     const auto appInstance = static_cast<HINSTANCE>(GetModuleHandle(nullptr));
 
-    WNDCLASSEX wc;
-    wc.cbSize = sizeof(WNDCLASSEX);
+    WNDCLASSEXA wc;
+    wc.cbSize = sizeof(WNDCLASSEXA);
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = StatusWndProc;
     wc.cbClsExtra = 0;
@@ -106,7 +106,7 @@ bool OSNotification::initNotificationWin()
     wc.lpszMenuName = nullptr;
     wc.lpszClassName = className;
 
-    ATOM atom = RegisterClassEx(&wc);
+    ATOM atom = RegisterClassExA(&wc);
     if (!atom)
         printf("Status::OsNotification registering window class failed.\n");
 
@@ -130,26 +130,15 @@ void OSNotification::showNotification(const QString& title,
         return;
     }
 
-    NOTIFYICONDATA tnd;
+    auto sizeRestrictTitle = title.left(63).toStdString().c_str(); // Max 64 characters. Reserve null termination
+    auto sizeRestrictMessage = message.left(255).toStdString().c_str(); // Max 256 characters. Reserve null termination
+
+    NOTIFYICONDATAA tnd;
     memset(&tnd, 0, sizeof(NOTIFYICONDATA));
     tnd.cbSize = sizeof(NOTIFYICONDATA);
     tnd.uVersion = NOTIFYICON_VERSION_4;
-
-    QString t = title;
-    wchar_t wcTitle[64];    
-    stringToLimitedWCharArray(t, wcTitle, 64);
-    _bstr_t bT(wcTitle);
-    const char* cTitle = bT;
-
-    QString m = message;
-    wchar_t wcMessage[256];
-    stringToLimitedWCharArray(m, wcMessage, 256);
-    _bstr_t bM(wcMessage);
-    const char* cMessage = bM;
-
-    strncpy_s(tnd.szInfoTitle, sizeof(tnd.szInfoTitle), cTitle, strlen(cTitle));
-    strncpy_s(tnd.szInfo, sizeof(tnd.szInfo), cMessage, strlen(cMessage));
-
+    strncpy_s(tnd.szInfoTitle, sizeof(tnd.szInfoTitle), sizeRestrictTitle, strlen(sizeRestrictTitle));
+    strncpy_s(tnd.szInfo, sizeof(tnd.szInfo), sizeRestrictTitle, strlen(sizeRestrictTitle));
     tnd.uID = NOTIFYICONID;
     tnd.hWnd = m_hwnd;
     tnd.dwInfoFlags = NIIF_INFO;
@@ -160,7 +149,7 @@ void OSNotification::showNotification(const QString& title,
     m_identifiers.insert(id, identifier);
     tnd.uCallbackMessage = id;
 
-    Shell_NotifyIcon(NIM_MODIFY, &tnd);
+    Shell_NotifyIconA(NIM_MODIFY, &tnd);
 
 #elif defined Q_OS_MACOS
     showNotificationMacOs(title, message, identifier);
