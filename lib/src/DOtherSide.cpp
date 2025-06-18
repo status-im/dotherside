@@ -37,6 +37,7 @@
 #include <QtQml/QQmlNetworkAccessManagerFactory>
 #include <QtCore>
 #include <QtGui/QTextDocumentFragment>
+#include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
@@ -1365,6 +1366,24 @@ char *dos_plain_text(char* htmlString)
 char *dos_escape_html(char* input)
 {
    return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
+}
+
+char *dos_save_byte_image_to_file(const char* imagePathOrData, const char* tmpDirPath)
+{
+    const auto base64JPGPrefix = "data:image/jpeg;base64,";
+    QImage img;
+    bool loadResult = false;
+
+    loadResult = img.loadFromData(QByteArray::fromBase64(QByteArray(imagePathOrData).mid(qstrlen(base64JPGPrefix))));  // strip the prefix, decode from b64
+
+    if (!loadResult) {
+      qWarning() << "dos_image_resizer: failed to (down)load image";
+      return nullptr;
+    }
+
+    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
+    img.save(newFilePath, "JPG");
+    return convert_to_cstring(newFilePath.toUtf8());
 }
 
 char *dos_qurl_fromUserInput(char* input)
