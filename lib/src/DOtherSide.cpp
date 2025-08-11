@@ -49,6 +49,7 @@
 #include <QtQuickControls2/QQuickStyle>
 #endif
 #include <QtWebView>
+#include <QSslSocket>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -118,17 +119,27 @@ QNetworkAccessManager* QMLNetworkAccessFactory::create(QObject* parent)
 void dos_add_self_signed_certificate(const char* pemCertificateContent) {
     QSslConfiguration defaultConfig = QSslConfiguration::defaultConfiguration();
     QList<QSslCertificate> certList = defaultConfig.caCertificates();
+    qWarning() << "Adding self-signed certificate to the default SSL configuration";
+    qWarning() << "Certificate content:" << pemCertificateContent;
+    qWarning() << "/n---------------------------------------------";
+    
+    qWarning() << "Device supports OpenSSL: " << QSslSocket::supportsSsl();
+    qWarning()<<"availableBackends:"<<QSslSocket::availableBackends();
+    qWarning()<<"activeBackend:"<<QSslSocket::activeBackend();
+    qWarning()<<"sslLibraryBuildVersionString():"<<QSslSocket::sslLibraryBuildVersionString();
+    qWarning()<<"sslLibraryVersionString():"<<QSslSocket::sslLibraryVersionString();
+    qWarning()<<"supportedFeatures():";
+    for(auto v:QSslSocket::supportedFeatures())
+    {
+        qDebug()<<int(v);
+    }
+    qDebug()<<"supportedProtocols():"<<QSslSocket::supportedProtocols();
+
     QByteArray data(pemCertificateContent);
     const auto certs = QSslCertificate::fromData(data, QSsl::Pem);
     for (const QSslCertificate &cert : certs) {
         certList += cert;
     }
-    // According to the docs, caCertificates() should have returned
-    // the system certificates (https://doc.qt.io/archives/qt-5.14/qsslconfiguration.html#systemCaCertificates)
-    // but looks like there's a bug in QT, because caCertificates() 
-    // returns an empty list. Without this, we end up not being
-    // able to load stickers or gifs
-    certList.append(defaultConfig.systemCaCertificates());
 
     defaultConfig.setCaCertificates(certList);
     QSslConfiguration::setDefaultConfiguration(defaultConfig);
