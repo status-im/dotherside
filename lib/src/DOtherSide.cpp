@@ -1367,21 +1367,39 @@ char *dos_escape_html(char* input)
    return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
 }
 
+QString detectImageFormat(const QByteArray &data) {
+    QBuffer buffer(const_cast<QByteArray*>(&data));
+    buffer.open(QIODevice::ReadOnly);
+
+    QImageReader reader(&buffer);
+    QByteArray fmt = reader.format();  // e.g. "png", "jpeg"
+    return QString::fromLatin1(fmt);
+}
+
 char *dos_save_byte_image_to_file(const char* imagePathOrData, const char* tmpDirPath)
 {
-    const auto base64JPGPrefix = "data:image/jpeg;base64,";
-    QImage img;
-    bool loadResult = false;
-
-    loadResult = img.loadFromData(QByteArray::fromBase64(QByteArray(imagePathOrData).mid(qstrlen(base64JPGPrefix))));  // strip the prefix, decode from b64
-
-    if (!loadResult) {
-      qWarning() << "dos_image_resizer: failed to (down)load image";
-      return nullptr;
+    qDebug() << "dos_save_byte_image_to_file" << imagePathOrData << tmpDirPath;
+    QByteArray imageData = QByteArray::fromBase64(imagePathOrData);
+    QString format = detectImageFormat(imageData);
+    if (format.isEmpty()) {
+        qWarning() << "dos_save_byte_image_to_file: unknown image format:" << format;
+        return nullptr;
     }
 
-    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
-    img.save(newFilePath, "JPG");
+    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + format;
+
+    qDebug() << "dos_save_byte_image_to_file input:" << imagePathOrData;
+    qDebug() << "dos_save_byte_image_to_file: parsing as format" << format;
+    qDebug() << "dos_save_byte_image_to_file: saving image to" << newFilePath;
+
+    QImage image;
+    auto loaded = image.loadFromData(imageData);
+    if (!loaded) {
+        qWarning() << "dos_save_byte_image_to_file: failed to load image from data";
+        return nullptr;
+    }
+
+    image.save(newFilePath, format.toUtf8().constData());
     return convert_to_cstring(newFilePath.toUtf8());
 }
 
