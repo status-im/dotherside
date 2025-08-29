@@ -1369,19 +1369,32 @@ char *dos_escape_html(char* input)
 
 char *dos_save_byte_image_to_file(const char* imagePathOrData, const char* tmpDirPath)
 {
-    const auto base64JPGPrefix = "data:image/jpeg;base64,";
+    QByteArray data;
+    QString format = QStringLiteral("jpg");
+
+    static QRegularExpression re("^data:image/([^;]+);base64,(.*)$");
+
+    QRegularExpressionMatch match = re.match(imagePathOrData);
+    if (match.hasMatch()) {
+        format = match.captured(1);
+        data = match.captured(2).toUtf8();
+    } else {
+        data = imagePathOrData;
+    }
+
     QImage img;
     bool loadResult = false;
 
-    loadResult = img.loadFromData(QByteArray::fromBase64(QByteArray(imagePathOrData).mid(qstrlen(base64JPGPrefix))));  // strip the prefix, decode from b64
+    loadResult = img.loadFromData(QByteArray::fromBase64(data));
 
     if (!loadResult) {
       qWarning() << "dos_image_resizer: failed to (down)load image";
       return nullptr;
     }
 
-    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
-    img.save(newFilePath, "JPG");
+    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + "." + format;
+    img.save(newFilePath, format.toUtf8().constData());
+
     return convert_to_cstring(newFilePath.toUtf8());
 }
 
