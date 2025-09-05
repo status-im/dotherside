@@ -35,7 +35,6 @@
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlNetworkAccessManagerFactory>
-#include <QtCore>
 #include <QtGui/QTextDocumentFragment>
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
@@ -153,7 +152,6 @@ void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 {
     Q_UNUSED(uiScaleFilePath)
 
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 }
 
@@ -210,7 +208,7 @@ void dos_qguiapplication_create()
     // In other words: argv strings can't be string literals!
     const auto toCharPtr = [](const QString& str) {
         auto bytes = str.toLocal8Bit();
-        char *data = new char[bytes.size() + 1]; 
+        char *data = new char[bytes.size() + 1];
         strcpy(data, bytes.data());
         return data; // we don't care about memory leak here
     };
@@ -227,6 +225,12 @@ void dos_qguiapplication_create()
     // We increase js stack size to prevent "Maximum call stack size exceeded" on UI loading.
     qputenv("QV4_JS_MAX_STACK_SIZE", "10485760");
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1");
+
+    // disable QML cache prior to Qt 6.9.2
+    if (QVersionNumber::compare(QVersionNumber::fromString(qVersion()), {6, 9, 2}) < 0) {
+      qInfo() << "Disabling QML cache for Qt version < 6.9.2";
+      qputenv("QML_DISABLE_DISK_CACHE", QByteArrayView("1"));
+    }
 
     new QGuiApplication(argc, argv);
 #ifdef Q_OS_MACOS
@@ -1354,8 +1358,6 @@ DosQObject* dos_qpointer_data(DosQPointer *self)
 {
     return static_cast<QPointer<QObject>*>(self)->data();
 }
-
-#include "DOtherSide.moc"
 
 char *dos_plain_text(char* htmlString)
 {
