@@ -178,6 +178,49 @@ DOS_API void DOS_CALL dos_qqmlapplicationengine_addImageProvider(DosQQmlApplicat
 /// \param vptr The QQmlApplicationEngine
 DOS_API void DOS_CALL dos_qqmlapplicationengine_delete(DosQQmlApplicationEngine *vptr);
 
+/// \brief Force the JS engine to perform a full garbage collection cycle.
+/// \param vptr The QQmlApplicationEngine
+/// \note Must be called from the GUI thread. This does not destroy QML objects that are still strongly referenced.
+DOS_API void DOS_CALL dos_qqmlapplicationengine_collect_garbage(DosQQmlApplicationEngine *vptr);
+
+/// \brief Unload all currently loaded QML root objects and clear engine level caches/singletons.
+///
+/// Steps performed (in order):
+///  1. Schedule deletion of all root objects (rootObjects()).
+///  2. Process posted events to execute pending deletions.
+///  3. Clear QML singletons (clearSingletons()).
+///  4. Clear the component cache (clearComponentCache()).
+///  5. Run a JS garbage collection cycle.
+///
+/// This aims to aggressively release memory held by QML objects, JS wrappers and component metadata
+/// without destroying the QQmlApplicationEngine instance itself, allowing a lighter-weight restart.
+///
+/// \warning All previously obtained QObject* pointers to QML objects (including context properties bound
+///          into the engine) become invalid after this call. External code must refresh references.
+/// \note Must be invoked on the GUI thread.
+DOS_API void DOS_CALL dos_qqmlapplicationengine_unload(DosQQmlApplicationEngine *vptr);
+
+/// \brief Convenience helper that unloads the engine (see dos_qqmlapplicationengine_unload) and then
+///        loads the given main QML file again.
+/// \param vptr The QQmlApplicationEngine
+/// \param filename The main QML file (relative to application dir) to load after unloading.
+/// \note Errors in reloading will cause the same fatal handling as dos_qqmlapplicationengine_load.
+DOS_API void DOS_CALL dos_qqmlapplicationengine_restart(DosQQmlApplicationEngine *vptr, const char *filename);
+
+/// \brief Destroy the given engine and return a fresh instance.
+/// \param vptr The existing engine to destroy (may be null)
+/// \return A newly created QQmlApplicationEngine ready for setup and load.
+/// \note Callers must re-apply import paths, network factories, image providers, and context properties.
+DOS_API DosQQmlApplicationEngine * DOS_CALL dos_qqmlapplicationengine_recreate(DosQQmlApplicationEngine *vptr);
+
+/// \brief Hint the system allocator to return freed pages to the OS.
+/// Useful after aggressive unloads to see RSS drop more noticeably.
+DOS_API void DOS_CALL dos_process_memory_pressure_relief(void);
+
+/// \brief Get the current resident set size (RSS) in bytes for this process.
+/// Platform-specific implementation; returns 0 on failure.
+DOS_API unsigned long long DOS_CALL dos_process_rss_bytes(void);
+
 /// @}
 
 /// \defgroup QQuickImageProvider QQuickImageProvider

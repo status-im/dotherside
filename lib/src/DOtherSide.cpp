@@ -31,6 +31,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QSslSocket>
+#include <QtNetwork/QNetworkCookieJar>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
 #include <QtQml/QQmlContext>
@@ -40,6 +41,7 @@
 #include <QtQml/QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
+#include <QtGui/QPixmapCache>
 #include <QTranslator>
 #include <QSettings>
 #include <QTimer>
@@ -51,6 +53,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Platform-specific allocator headers for memory pressure relief
+#if defined(Q_OS_MACOS)
+#include <mach/mach.h>
+#include <mach/task.h>
+#include <malloc/malloc.h>
+#endif
 #include "DOtherSide/DOtherSideTypesCpp.h"
 #include "DOtherSide/DosQMetaObject.h"
 #include "DOtherSide/DosQObject.h"
@@ -69,6 +77,9 @@
 #include <QProcessEnvironment>
 #include "StatusDesktop/Monitoring/Monitor.h"
 #endif
+
+// import mimalloc `mi_collect` here if you want to use mimalloc's memory pressure relief
+// extern "C" void mi_collect(bool force);
 
 namespace {
 
@@ -360,17 +371,184 @@ void dos_qqmlapplicationengine_add_import_path(::DosQQmlApplicationEngine *vptr,
     return engine->rootContext();
 }
 
+namespace {
+// Track providers added via this API to allow removal during aggressive unloads.
+static QHash<QQmlEngine*, QSet<QString>> g_engineProviders;
+}
+
 void dos_qqmlapplicationengine_addImageProvider(DosQQmlApplicationEngine *vptr, const char* name, DosQQuickImageProvider *vptr_i)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
     auto provider = static_cast<DosImageProvider *>(vptr_i);
-    engine->addImageProvider(QString(name), provider);
+    const QString id = QString(name);
+    engine->addImageProvider(id, provider);
+    g_engineProviders[engine].insert(id);
 }
 
 void dos_qqmlapplicationengine_delete(::DosQQmlApplicationEngine *vptr)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-    delete engine;
+    g_engineProviders.remove(engine);
+    engine->deleteLater();
+}
+
+void dos_qqmlapplicationengine_collect_garbage(::DosQQmlApplicationEngine *vptr)
+{
+    if (!vptr) return;
+    auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+    // collectGarbage is inherited from QJSEngine
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    engine->collectGarbage();
+#else
+    // For completeness if Qt5 variant is used
+    engine->collectGarbage();
+#endif
+}
+
+static void dos_process_all_queued_events()
+{
+    // Spin the event loop briefly to ensure deleteLater queued objects are destroyed.
+    // Use a bounded loop to avoid starvation if new events keep being posted.
+    for (int i = 0; i < 5; ++i) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+        QCoreApplication::sendPostedEvents(nullptr, 0);
+    }
+}
+
+void dos_qqmlapplicationengine_unload(::DosQQmlApplicationEngine *vptr)
+{
+    if (!vptr) return;
+    auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+
+    // 1. Delete root objects (schedule deleteLater to be safe if invoked during signal/JS execution)
+    const auto roots = engine->rootObjects();
+    for (QObject* obj : roots) {
+        if (!obj) continue;
+        // If it's a window, aggressively release scene graph resources first
+        if (auto window = qobject_cast<QQuickWindow*>(obj)) {
+            window->releaseResources();
+            window->setVisible(false);
+            window->close();
+        }
+        obj->setParent(nullptr); // detach to avoid cascading deletes outside our control
+        obj->deleteLater();
+    }
+    dos_process_all_queued_events();
+
+    // 1b. Clear QPixmap cache (icons/images)
+    QPixmapCache::clear();
+
+    // 2. Clear singletons (must precede component cache clearing per Qt docs)
+    engine->clearSingletons();
+
+    // // 3. Clear component cache (metadata)
+    engine->clearComponentCache();
+
+    // // 4. Trim any residual unused components
+    engine->trimComponentCache();
+
+    // 4b. Remove image providers added through this API to release any provider-side caches
+    if (g_engineProviders.contains(engine)) {
+        const auto ids = g_engineProviders.value(engine);
+        for (const auto &id : ids) {
+            engine->removeImageProvider(id);
+        }
+        g_engineProviders.remove(engine);
+    }
+
+    // 4c. Network caches: QML doesn't expose the engine's QNetworkAccessManager instance.
+    // If needed, consider reinitializing the network factory before reload to ensure a fresh NAM.
+
+    // 5. JS GC
+    engine->collectGarbage();
+
+    // 6. Process any further deletions queued by destructors
+    dos_process_all_queued_events();
+
+    // 7. One more GC/trim pass for good measure
+    engine->trimComponentCache();
+    engine->collectGarbage();
+    dos_process_all_queued_events();
+
+    // 8. Hint allocator to return freed pages to OS if possible
+    dos_process_memory_pressure_relief();
+    // dos_qqmlapplicationengine_delete(vptr);
+    // mi_collect(true); // mimalloc-specific memory pressure relief
+}
+
+::DosQQmlApplicationEngine *dos_qqmlapplicationengine_recreate(::DosQQmlApplicationEngine *vptr)
+{
+    if (vptr) {
+        dos_qqmlapplicationengine_unload(vptr);
+        dos_qqmlapplicationengine_delete(vptr);
+    }
+    return dos_qqmlapplicationengine_create();
+}
+
+void dos_qqmlapplicationengine_restart(::DosQQmlApplicationEngine *vptr, const char *filename)
+{
+    if (!vptr || !filename) return;
+    dos_qqmlapplicationengine_unload(vptr);
+    // Re-load main file (reuse existing helper to keep consistent error handling)
+    dos_qqmlapplicationengine_load(vptr, filename);
+}
+
+void dos_process_memory_pressure_relief()
+{
+#if defined(Q_OS_MACOS)
+// macOS 10.9+: relieve pressure on all malloc zones; nullptr means default zone
+// Not all libmallocs support returning a useful value; we ignore it safely
+    vm_address_t * zones;
+  unsigned int count;
+  unsigned int i;
+
+  kern_return_t rc = malloc_get_all_zones(mach_task_self(), 0, &zones, &count);
+  if (0 != rc)
+  {
+    fprintf(stderr, "rc was %d\n", rc);
+  }
+  for (i = 0; i < count; ++i)
+  {
+    malloc_zone_t * zone = (malloc_zone_t*)zones[i];
+    char const * name = malloc_get_zone_name(zone);
+    if (NULL == name)
+    {
+      continue;
+    }
+    malloc_zone_pressure_relief(zone, 0);
+    }
+#else
+    // Other platforms: no-op
+#endif
+}
+
+unsigned long long dos_process_rss_bytes()
+{
+#if defined(Q_OS_MACOS)
+    task_basic_info_data_t info;
+    mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
+    if (task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &count) == KERN_SUCCESS) {
+        return static_cast<unsigned long long>(info.resident_size);
+    }
+    return 0ULL;
+#elif defined(Q_OS_LINUX)
+    FILE *fp = fopen("/proc/self/statm", "r");
+    if (!fp) return 0ULL;
+    long total = 0, resident = 0;
+    if (fscanf(fp, "%ld %ld", &total, &resident) != 2) { fclose(fp); return 0ULL; }
+    fclose(fp);
+    long pageSize = sysconf(_SC_PAGESIZE);
+    if (pageSize <= 0) return 0ULL;
+    return static_cast<unsigned long long>(resident) * static_cast<unsigned long long>(pageSize);
+#elif defined(Q_OS_WIN)
+    PROCESS_MEMORY_COUNTERS pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+        return static_cast<unsigned long long>(pmc.WorkingSetSize);
+    }
+    return 0ULL;
+#else
+    return 0ULL;
+#endif
 }
 
 
@@ -520,6 +698,13 @@ void dos_qqmlcontext_setcontextproperty(::DosQQmlContext *vptr, const char *name
 {
     auto context = static_cast<QQmlContext *>(vptr);
     auto variant = static_cast<QVariant *>(value);
+    if (variant->canConvert<QObject*>())
+    {
+        qDebug() << "Setting context property" << name << "to QObject*";
+        auto obj = variant->value<QObject*>();
+        context->setContextProperty(QString::fromUtf8(name), obj);
+        return;
+    }
     context->setContextProperty(QString::fromUtf8(name), *variant);
 
 #ifdef MONITORING
