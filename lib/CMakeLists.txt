@@ -7,7 +7,7 @@ set(MONITORING_QML_ENTRY_POINT "" CACHE STRING "QML file intended to start the m
 
 find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Qml Gui Quick QuickControls2 Widgets WebView REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core CorePrivate Qml Gui Quick QuickControls2 Widgets WebView REQUIRED)
 
 if(MONITORING)
     include(../../../ui/MonitoringSources.cmake)
