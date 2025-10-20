@@ -1369,35 +1369,43 @@ char *dos_escape_html(char* input)
    return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
 }
 
-char *dos_save_byte_image_to_file(const char* imagePathOrData, const char* tmpDirPath)
+char *dos_save_byte_image_to_file(const char* imagePathOrData)
 {
     QByteArray data;
     QString format = QStringLiteral("jpg");
+    bool inlineData;
 
     static QRegularExpression re("^data:image/([^;]+);base64,(.*)$");
 
     QRegularExpressionMatch match = re.match(imagePathOrData);
     if (match.hasMatch()) {
-        format = match.captured(1);
-        data = match.captured(2).toUtf8();
+      format = match.captured(1);
+      data = match.captured(2).toUtf8();
+      inlineData = true;
     } else {
-        data = imagePathOrData;
+      data = imagePathOrData;
+      inlineData = false;
     }
 
     QImage img;
     bool loadResult = false;
 
-    loadResult = img.loadFromData(QByteArray::fromBase64(data));
+    if (inlineData)
+      loadResult = img.loadFromData(QByteArray::fromBase64(data));
+    else
+      loadResult = img.load(imagePathOrData);
 
     if (!loadResult) {
       qWarning() << "dos_image_resizer: failed to (down)load image";
       return nullptr;
     }
 
-    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + "." + format;
-    img.save(newFilePath, format.toUtf8().constData());
+    const auto newFilePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QDir::separator() + QUuid::createUuid().toString(QUuid::WithoutBraces) + '.' + format;
+    if (img.save(newFilePath, format.toUtf8().constData()))
+      return convert_to_cstring(newFilePath.toUtf8());
 
-    return convert_to_cstring(newFilePath.toUtf8());
+    qWarning() << "dos_image_resizer: failed to save image to:" << newFilePath;
+    return {};
 }
 
 char *dos_qurl_fromUserInput(char* input)

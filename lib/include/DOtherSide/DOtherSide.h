@@ -100,7 +100,7 @@ DOS_API char * DOS_CALL dos_plain_text(char* htmlString);
 
 DOS_API char * DOS_CALL dos_escape_html(char* input);
 
-DOS_API char * DOS_CALL dos_save_byte_image_to_file(const char* imagePathOrData, const char* tmpDirPath);
+DOS_API char * DOS_CALL dos_save_byte_image_to_file(const char* imagePathOrData);
 
 DOS_API char * DOS_CALL dos_qurl_fromUserInput(char* input);
 
