@@ -6,7 +6,7 @@ KeychainManager::KeychainManager(const QString& service,
     const QString& authenticationReason, QObject* parent)
     : QObject(parent)
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     m_authenticationReason = authenticationReason;
     m_localAuth = std::unique_ptr<LocalAuthentication>(new LocalAuthentication());
     m_keychain = std::unique_ptr<Keychain>(new Keychain(service));
@@ -28,7 +28,7 @@ KeychainManager::KeychainManager(const QString& service,
 
 QString KeychainManager::readDataSync(const QString& key) const
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     return readDataSyncMacOs(key);
 #endif
     
@@ -37,21 +37,21 @@ QString KeychainManager::readDataSync(const QString& key) const
 
 void KeychainManager::readDataAsync(const QString& key)
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     readDataAsyncMacOs(key);
 #endif
 }
 
 void KeychainManager::storeDataAsync(const QString& key, const QString& data)
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     storeDataAsyncMacOs(key, data);
 #endif
 }
 
 void KeychainManager::deleteDataAsync(const QString& key)
 {
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) || defined(Q_OS_IOS)
     deleteDataAsyncMacOs(key);
 #endif
 }
