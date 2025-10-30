@@ -1400,7 +1400,17 @@ char *dos_save_byte_image_to_file(const char* imagePathOrData)
       return nullptr;
     }
 
-    const auto newFilePath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QDir::separator() + QUuid::createUuid().toString(QUuid::WithoutBraces) + '.' + format;
+    // save to `~/Pictures` by default
+    QString destDirPath = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    QDir destDir(destDirPath);
+    if (!destDir.exists()) {
+      if (!destDir.mkpath(destDirPath)) {
+        // only iff Pictures doesn't exist or can't be created, fallback to TMPDIR as a last resort
+        destDirPath = QDir::tempPath();
+      }
+    }
+
+    const auto newFilePath = destDirPath + QDir::separator() + QUuid::createUuid().toString(QUuid::WithoutBraces) + '.' + format;
     if (img.save(newFilePath, format.toUtf8().constData()))
       return convert_to_cstring(newFilePath.toUtf8());
 
