@@ -18,14 +18,7 @@ macro(add_target name type)
     file(GLOB HEADERS include/DOtherSide/*.h include/DOtherSide/Status/*.h)
     file(GLOB SOURCES src/*.cpp src/Status/*.cpp)
 
-    if(IOS)
-        # Explicitly add the .mm files for iOS
-        list(PREPEND SOURCES
-          ${CMAKE_CURRENT_LIST_DIR}/src/Status/Keychain.mm
-          ${CMAKE_CURRENT_LIST_DIR}/src/Status/KeychainManager.mm
-          ${CMAKE_CURRENT_LIST_DIR}/src/Status/LocalAuthentication.mm
-        )
-    elseif(APPLE)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
         #prepend items because .mm files need build priority to override cpp impl
         list(PREPEND SOURCES ${MM_FILES})

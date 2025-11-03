@@ -1083,22 +1083,6 @@ DOS_API void dos_qtimer_set_single_shot(DosQTimer *vptr, bool singleShot);
 DOS_API bool dos_qtimer_is_single_shot(DosQTimer *vptr);
 DOS_API bool dos_qtimer_is_active(DosQTimer *vptr);
 
-#pragma region KeychainManager exposed methods
-
-DOS_API DosKeychainManager* dos_keychainmanager_create(const char* service, 
-    const char* authenticationReason);
-DOS_API char* dos_keychainmanager_read_data_sync(DosKeychainManager* vptr, 
-    const char* key);
-DOS_API void dos_keychainmanager_read_data_async(DosKeychainManager* vptr, 
-    const char* key);
-DOS_API void dos_keychainmanager_store_data_async(DosKeychainManager* vptr, 
-    const char* key, const char* data);
-DOS_API void dos_keychainmanager_delete_data_async(DosKeychainManager* vptr, 
-    const char* key);
-DOS_API void dos_keychainmanager_delete(DosKeychainManager* vptr);
-
-#pragma endregion
-
 DOS_API char *dos_to_local_file(const char* fileUrl);
 
 DOS_API char *dos_from_local_file(const char* filePath);
