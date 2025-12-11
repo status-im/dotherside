@@ -1044,6 +1044,7 @@ DOS_API void DOS_CALL dos_singleinstance_delete(DosSingleInstance *vptr);
 
 DOS_API DosEvent* dos_event_create_urlSchemeEvent();
 DOS_API void dos_event_delete(DosEvent* vptr);
+DOS_API void dos_event_set_urlSchemeEvent_instance(DosEvent* vptr);
 
 #pragma endregion
 
