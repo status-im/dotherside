@@ -1471,6 +1471,14 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
     return new Status::UrlSchemeEvent();
 }
 
+void dos_event_set_urlSchemeEvent_instance(DosEvent* vptr)
+{
+    if (vptr) {
+        auto urlSchemeEvent = static_cast<Status::UrlSchemeEvent*>(vptr);
+        Status::UrlSchemeEvent::setInstance(urlSchemeEvent);
+    }
+}
+
 void dos_event_delete(DosEvent* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
