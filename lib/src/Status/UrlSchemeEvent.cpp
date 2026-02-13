@@ -3,9 +3,28 @@
 using namespace Status;
 
 #include <QFileOpenEvent>
+
 #if defined(Q_OS_ANDROID)
     #include <jni.h>
 #endif // Q_OS_ANDROID
+
+#include <QDesktopServices>
+
+void UrlSchemeEvent::registerUrlHandler()
+{
+#if defined(Q_OS_IOS)
+    // On iOS with Qt 6, universal links are delivered via UISceneDelegate
+    // which calls QDesktopServices::openUrl() instead of posting QFileOpenEvent.
+    // Register a handler for "https" scheme to intercept these URLs.
+    QDesktopServices::setUrlHandler("https", this, "handleUrl");
+    QDesktopServices::setUrlHandler("status-app", this, "handleUrl");
+#endif
+}
+
+void UrlSchemeEvent::handleUrl(const QUrl& url)
+{
+    emit urlActivated(url.toString());
+}
 
 bool UrlSchemeEvent::eventFilter(QObject* obj, QEvent* event)
 {

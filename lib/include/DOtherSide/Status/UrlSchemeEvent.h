@@ -13,8 +13,13 @@ namespace Status
             void emitDeepLinkToQt(const QString& url);
             static void setInstance(UrlSchemeEvent* instance);
 
+            void registerUrlHandler();
+
         protected:
             bool eventFilter(QObject* obj, QEvent* event) override;
+
+        public slots:
+            void handleUrl(const QUrl& url);
 
         signals:
             void urlActivated(const QString& url);
