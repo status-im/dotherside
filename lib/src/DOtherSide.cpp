@@ -1468,7 +1468,9 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
 
 ::DosEvent* dos_event_create_urlSchemeEvent()
 {
-    return new Status::UrlSchemeEvent();
+    auto event = new Status::UrlSchemeEvent();
+    event->registerUrlHandler();
+    return event;
 }
 
 void dos_event_set_urlSchemeEvent_instance(DosEvent* vptr)
