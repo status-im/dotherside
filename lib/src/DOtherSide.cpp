@@ -38,6 +38,7 @@
 #include <QtGui/QTextDocumentFragment>
 #include <QtCore/QUuid>
 #include <QtQml/QQmlApplicationEngine>
+#include <QtQml/QQmlFileSelector>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickImageProvider>
 #include <QTranslator>
@@ -267,18 +268,24 @@ void dos_qguiapplication_installEventFilter(::DosEvent* vptr)
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
 {
-#ifdef MONITORING
     auto engine = new QQmlApplicationEngine();
+
+    // Delete the QQmlFileSelector that QQmlApplicationEngine auto-installs
+    // The qml file selectors are expensive on Android - especially in Status where there are lots of qml files and assets.
+    QT_WARNING_PUSH
+    QT_WARNING_DISABLE_DEPRECATED
+    delete QQmlFileSelector::get(engine);
+    QT_WARNING_POP
+
+#ifdef MONITORING
     auto disabledValue = QStringLiteral("0");
 
     if (QProcessEnvironment::systemEnvironment().value(
             QStringLiteral("DISABLE_MONITORING_WINDOW"), disabledValue) == disabledValue)
         Monitor::instance().initialize(engine);
+#endif
 
     return engine;
-#else
-    return new QQmlApplicationEngine();
-#endif
 }
 
 ::DosQQmlNetworkAccessManagerFactory *dos_qqmlnetworkaccessmanagerfactory_create(const char* tmpPath)
