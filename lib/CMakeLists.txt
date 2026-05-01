@@ -39,6 +39,7 @@ macro(add_target name type)
     target_compile_definitions(${name} PRIVATE $<$<CONFIG:Debug>:QT_QML_DEBUG>)
     if(DEFINED QML_DEBUG_PORT)
         target_compile_definitions(${name} PRIVATE QML_DEBUG_PORT=${QML_DEBUG_PORT})
+        target_compile_definitions(${name} PRIVATE QT_QML_DEBUG)
     endif()
 
     if(MONITORING)
