@@ -80,6 +80,10 @@ DOS_API void DOS_CALL dos_qguiapplication_exec(void);
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_quit(void);
 
+/// \brief Calls the QGuiApplication::exit() function of the current QGuiApplication
+/// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
+DOS_API void DOS_CALL dos_qguiapplication_exit(void);
+
 /// \brief Free the memory of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
 DOS_API void DOS_CALL dos_qguiapplication_delete(void);

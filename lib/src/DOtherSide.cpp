@@ -249,10 +249,15 @@ void dos_qguiapplication_exec()
     qGuiApp->exec();
 }
 
+// Use those functions to be safe for quitting the app (avoid potential crashes).
+// Quit can be caught by `onClosing`, so if you want to terminate the app for good, use `exit` instead.
 void dos_qguiapplication_quit()
 {
-    // This way we will be safe for quitting the app (avoid potential crashes).
     QMetaObject::invokeMethod(qGuiApp, "quit", Qt::QueuedConnection);
+}
+void dos_qguiapplication_exit()
+{
+    QMetaObject::invokeMethod(qGuiApp, "exit", Qt::QueuedConnection);
 }
 
 void dos_qguiapplication_icon(const char *filename)
