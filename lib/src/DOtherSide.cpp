@@ -367,7 +367,9 @@ void dos_qqmlapplicationengine_add_import_path(::DosQQmlApplicationEngine *vptr,
 ::DosQQmlContext *dos_qqmlapplicationengine_context(::DosQQmlApplicationEngine *vptr)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
-    engine->rootContext();
+    if (!engine)
+        return nullptr;
+
     return engine->rootContext();
 }
 
@@ -531,6 +533,9 @@ void dos_qqmlcontext_setcontextproperty(::DosQQmlContext *vptr, const char *name
 {
     auto context = static_cast<QQmlContext *>(vptr);
     auto variant = static_cast<QVariant *>(value);
+    if (!context || !variant || !name)
+        return;
+
     context->setContextProperty(QString::fromUtf8(name), *variant);
 
 #ifdef MONITORING
