@@ -253,11 +253,15 @@ void dos_qguiapplication_exec()
 // Quit can be caught by `onClosing`, so if you want to terminate the app for good, use `exit` instead.
 void dos_qguiapplication_quit()
 {
-    QMetaObject::invokeMethod(qGuiApp, "quit", Qt::QueuedConnection);
+  if (qGuiApp->closingDown())
+    return;
+  QMetaObject::invokeMethod(qGuiApp, &QGuiApplication::quit, Qt::QueuedConnection);
 }
 void dos_qguiapplication_exit()
 {
-    QMetaObject::invokeMethod(qGuiApp, "exit", Qt::QueuedConnection);
+  if (qGuiApp->closingDown())
+    return;
+  QMetaObject::invokeMethod(qGuiApp, &QGuiApplication::exit, Qt::QueuedConnection, 0);
 }
 
 void dos_qguiapplication_icon(const char *filename)
